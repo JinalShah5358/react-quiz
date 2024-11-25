@@ -3,9 +3,12 @@ import Header from "./Header";
 import Loader from "./Loader";
 import Error from "./Error";
 import StartScrren from "./StartScrren";
+import Question from "./Question";
+
 const initialState = {
   questions: [],
   status: "loading",
+  index: 0,
 };
 
 function reducer(state, action) {
@@ -22,13 +25,22 @@ function reducer(state, action) {
         ...state,
         status: "error",
       };
+    case "start":
+      return {
+        ...state,
+        status: "active",
+        index: 0,
+      };
     default:
     // throw new Error("action unknown");
   }
 }
 
 export default function App() {
-  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   const numQuestions = questions.length;
 
@@ -51,7 +63,10 @@ export default function App() {
       <main>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
-        {status === "ready" && <StartScrren numQuestions={numQuestions} />}
+        {status === "ready" && (
+          <StartScrren numQuestions={numQuestions} dispatch={dispatch} />
+        )}
+        {status === "active" && <Question questions={questions[index]} />}
       </main>
     </div>
   );
